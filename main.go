@@ -2,6 +2,7 @@ package main
 
 import (
 	"image/color"
+	"log"
 	"maker/common"
 	"maker/mapdata"
 	"math/rand"
@@ -30,19 +31,29 @@ var generateButton common.Button = common.Button{
 	Active: true,
 }
 
+var falloffProbBar *mapdata.MapControl = mapdata.NewMapControl(50, 150, 400, 101, 500)
+
 var prevMousePressed bool = false
+var mapData *mapdata.MapArray = mapdata.NewMapArray(common.MapRes, common.MapRes)
 
 func (g *Game) Update() error {
 	// Update game logic here
+	falloffProbBar.Update()
 	mouseButtonPressed := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
 	if !mouseButtonPressed && prevMousePressed {
 		x, y := ebiten.CursorPosition()
 		if common.Collide(x, y, &generateButton) {
 			// Generate button logic
-			mapdata.ResetMap()
-			mapdata.GenerateIsland(rand.Intn(common.MapRes), rand.Intn(common.MapRes), common.SpreadProb)
-			mapdata.GenerateIsland(rand.Intn(common.MapRes), rand.Intn(common.MapRes), common.SpreadProb)
-			mapdata.GenerateIsland(rand.Intn(common.MapRes), rand.Intn(common.MapRes), common.SpreadProb)
+			falloffProb := falloffProbBar.GetValue()
+			mapData.ResetMap()
+			log.Printf("Falloff probability: %f", falloffProb)
+			border := common.MapRes / 8
+			for i := 0; i < 3; i++ {
+				x := border + rand.Intn(border*6)
+				y := border + rand.Intn(border*6)
+				log.Println(x, y)
+				mapData.GenerateIsland(x, y, int(falloffProb))
+			}
 		} else if common.Collide(x, y, &exitButton) {
 			os.Exit(0)
 		}
@@ -54,9 +65,10 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	// Draw game graphics here
 	screen.Fill(color.Black)
-	mapdata.RenderMap(screen)
+	mapData.RenderMap(screen)
 	exitButton.Draw(screen)
 	generateButton.Draw(screen)
+	falloffProbBar.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
