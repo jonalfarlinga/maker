@@ -21,8 +21,6 @@ type MapControl struct {
 	floating bool
 }
 
-var prevMousePressed bool = false
-
 func NewMapControl(originX, originY, length int, minValue, maxValue float32, name string) *MapControl {
 	return &MapControl{
 		name:	 name,
@@ -40,7 +38,6 @@ func (mc *MapControl) Update() {
 	mouseButtonPressed := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
 	if !mouseButtonPressed {
 		mc.floating = false
-		prevMousePressed = false
 		return
 	}
 	x, y := ebiten.CursorPosition()
@@ -57,7 +54,6 @@ func (mc *MapControl) Update() {
 	} else {
 		mc.pos = x - mc.originX
 	}
-	prevMousePressed = mouseButtonPressed
 }
 
 func (mc *MapControl) GetValue() float32 {
