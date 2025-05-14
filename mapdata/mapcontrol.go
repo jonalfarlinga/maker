@@ -56,6 +56,13 @@ func (mc *MapControl) Update() {
 	}
 }
 
+func (mc *MapControl) BoundUpdate(twin *MapControl) {
+	if mc.floating {
+		twin.pos = mc.pos
+	}
+	mc.Update()
+}
+
 func (mc *MapControl) GetValue() float32 {
 	return float32(mc.pos)/float32(mc.length)*float32(mc.maxValue-mc.minValue) + float32(mc.minValue)
 }

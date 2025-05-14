@@ -47,7 +47,7 @@ func NewMapArray(width, height int) *MapArray {
 }
 
 func (m *MapArray) RenderMap(screen *ebiten.Image) {
-	rectSize := float32(common.ScreenHeight) / float32(min(m.Width, m.Height))
+	rectSize := float32(common.ScreenHeight) / float32(max(m.Width, m.Height))
 	origin := (common.ScreenWidth - common.ScreenHeight) / 2
 	for i := 0; i < m.Width; i++ {
 		for j := 0; j < m.Height; j++ {

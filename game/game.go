@@ -51,34 +51,41 @@ var numberOfIslandsBar *mapdata.MapControl = mapdata.NewMapControl(
 	"Number of Islands",
 )
 
-var resolutionBar *mapdata.MapControl = mapdata.NewMapControl(
+var resolutionBarX *mapdata.MapControl = mapdata.NewMapControl(
 	50, 250, 200,
 	25.0, 720.0,
-	"Resolution",
+	"Resolution X",
+)
+
+var resolutionBarY *mapdata.MapControl = mapdata.NewMapControl(
+	50, 300, 200,
+	25.0, 720.0,
+	"Resolution Y",
 )
 
 var fillinBar *mapdata.MapControl = mapdata.NewMapControl(
 	common.ScreenWidth - 250, 150, 200,
-	0.0, 50.0,
-	"Lake Fill-In Chance",
+	0.0, 15.0,
+	"Lake Suppresion",
 )
 
 var prevMousePressed bool = false
-var mapData *mapdata.MapArray = mapdata.NewMapArray(int(resolutionBar.GetValue()), int(resolutionBar.GetValue()))
+var mapData *mapdata.MapArray = mapdata.NewMapArray(int(resolutionBarX.GetValue()), int(resolutionBarY.GetValue()))
 
 func (g *Game) Update() error {
 	// Update game logic here
 	falloffProbBar.Update()
 	numberOfIslandsBar.Update()
-	resolutionBar.Update()
+	resolutionBarX.BoundUpdate(resolutionBarY)
+	resolutionBarY.Update()
 	fillinBar.Update()
 	mouseButtonPressed := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
 	if !mouseButtonPressed && prevMousePressed {
 		x, y := ebiten.CursorPosition()
 		if common.Collide(x, y, &generateButton) {
 			// Generate button logic
-			falloffProb := falloffProbBar.GetValue() * float32(mapData.Width)
-			mapData = mapdata.NewMapArray(int(resolutionBar.GetValue()), int(resolutionBar.GetValue()))
+			falloffProb := falloffProbBar.GetValue() * float32(max(mapData.Width, mapData.Height))/2
+			mapData = mapdata.NewMapArray(int(resolutionBarX.GetValue()), int(resolutionBarY.GetValue()))
 			border := min(mapData.Height, mapData.Width) / 8
 			n := int(numberOfIslandsBar.GetValue())
 			mapData.GenerateIsland(mapData.Width/2, mapData.Height/2, int(falloffProb))
@@ -99,15 +106,16 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black)
-	// Draw buttons
 	mapData.RenderMap(screen)
+	// Draw buttons
 	exitButton.Draw(screen)
 	generateButton.Draw(screen)
 	terraformLakesButton.Draw(screen)
 	// Draw the control bars
 	falloffProbBar.Draw(screen)
 	numberOfIslandsBar.Draw(screen)
-	resolutionBar.Draw(screen)
+	resolutionBarX.Draw(screen)
+	resolutionBarY.Draw(screen)
 	fillinBar.Draw(screen)
 }
 
