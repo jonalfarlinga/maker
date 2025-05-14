@@ -9,7 +9,7 @@ import (
 const (
 	ScreenHeight int = 720
 	ScreenWidth  int = 1280
-	MapRes int = 250
+	MapRes int = 480
 	SpreadProb int = 300
 )
 

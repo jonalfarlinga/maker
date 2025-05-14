@@ -1,10 +1,9 @@
 package mapdata
 
 import (
-	"log"
 	"maker/common"
-	"math"
 	"math/rand"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
@@ -16,6 +15,8 @@ type MapArray struct {
 	mapArray [][]int
 	visited  [][]bool
 }
+
+var r *rand.Rand
 
 func NewMapArray(width, height int) *MapArray {
 	m := make([][]int, width)
@@ -57,6 +58,7 @@ func (m *MapArray) RenderMap(screen *ebiten.Image) {
 }
 
 func (m *MapArray) GenerateIsland(x int, y int, prob int) {
+	r = rand.New(rand.NewSource(time.Now().UnixNano()))
 	if x < 0 || y < 0 || x > common.MapRes-1 || y > common.MapRes-1 {
 		return
 	}
@@ -65,42 +67,43 @@ func (m *MapArray) GenerateIsland(x int, y int, prob int) {
 	}
 	m.mapArray[x][y] = 1
 	m.visited[x][y] = true
-	if x < common.MapRes/6 || x > common.MapRes*5/6 || y < common.MapRes/6 || y > common.MapRes*5/6 {
-		log.Printf("prob: %d", prob)
-		prob = min(prob, expansionEdgeFalloff(x, y))
-		log.Printf("falloff: %d", prob)
+
+	if x < common.MapRes/10 || x > common.MapRes*9/10 ||
+		y < common.MapRes/10 || y > common.MapRes*9/10 {
+		prob = min(prob, min(x, y, common.MapRes-x, common.MapRes-y)*10)
 	}
+
 	// North
-	if rand.Intn(100) < prob {
-		m.GenerateIsland(x, y-1, prob-common.MapRes/50)
+	if r.Intn(100) < prob {
+		m.GenerateIsland(x, y-1, prob-5)
 	}
 	// North East
-	if rand.Intn(100) < prob {
-		m.GenerateIsland(x+1, y-1, prob-common.MapRes/50)
+	if r.Intn(100) < prob {
+		m.GenerateIsland(x+1, y-1, prob-5)
 	}
 	// East
-	if rand.Intn(100) < prob {
-		m.GenerateIsland(x+1, y, prob-common.MapRes/50)
+	if r.Intn(100) < prob {
+		m.GenerateIsland(x+1, y, prob-5)
 	}
 	// South East
-	if rand.Intn(100) < prob {
-		m.GenerateIsland(x+1, y+1, prob-common.MapRes/50)
+	if r.Intn(100) < prob {
+		m.GenerateIsland(x+1, y+1, prob-5)
 	}
 	// South
-	if rand.Intn(100) < prob {
-		m.GenerateIsland(x, y+1, prob-common.MapRes/50)
+	if r.Intn(100) < prob {
+		m.GenerateIsland(x, y+1, prob-5)
 	}
 	// South West
-	if rand.Intn(100) < prob {
-		m.GenerateIsland(x-1, y+1, prob-common.MapRes/50)
+	if r.Intn(100) < prob {
+		m.GenerateIsland(x-1, y+1, prob-5)
 	}
 	// West
-	if rand.Intn(100) < prob {
-		m.GenerateIsland(x-1, y, prob-common.MapRes/50)
+	if r.Intn(100) < prob {
+		m.GenerateIsland(x-1, y, prob-5)
 	}
 	// North West
-	if rand.Intn(100) < prob {
-		m.GenerateIsland(x-1, y-1, prob-common.MapRes/50)
+	if r.Intn(100) < prob {
+		m.GenerateIsland(x-1, y-1, prob-5)
 	}
 }
 
@@ -111,13 +114,4 @@ func (m *MapArray) ResetMap() {
 			m.visited[i][j] = false
 		}
 	}
-}
-
-func expansionEdgeFalloff(x, y int) int {
-	dist := float32(math.Sqrt(float64(
-		float32(x-common.MapRes/2)*float32(x-common.MapRes/2) +
-			float32(y-common.MapRes/2)*float32(y-common.MapRes/2)),
-	))
-	falloff := float32(1) - (dist / float32(common.MapRes/2))
-	return int(max(30, falloff))
 }
