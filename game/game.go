@@ -39,6 +39,15 @@ var terraformLakesButton common.Button = common.Button{
 	Active: true,
 }
 
+var savePNG common.Button = common.Button{
+	Width:  150,
+	Height: 50,
+	X:      50,
+	Y:      float32(common.ScreenHeight - 200),
+	Text:   "Save PNG",
+	Active: true,
+}
+
 var falloffProbBar *mapdata.MapControl = mapdata.NewMapControl(
 	50, 150, 200,
 	1.0, 100.0,
@@ -64,7 +73,7 @@ var resolutionBarY *mapdata.MapControl = mapdata.NewMapControl(
 )
 
 var fillinBar *mapdata.MapControl = mapdata.NewMapControl(
-	common.ScreenWidth - 250, 150, 200,
+	common.ScreenWidth-250, 150, 200,
 	0.0, 15.0,
 	"Lake Suppresion",
 )
@@ -84,7 +93,7 @@ func (g *Game) Update() error {
 		x, y := ebiten.CursorPosition()
 		if common.Collide(x, y, &generateButton) {
 			// Generate button logic
-			falloffProb := falloffProbBar.GetValue() * float32(max(mapData.Width, mapData.Height))/2
+			falloffProb := falloffProbBar.GetValue() * float32(max(mapData.Width, mapData.Height)) / 2
 			mapData = mapdata.NewMapArray(int(resolutionBarX.GetValue()), int(resolutionBarY.GetValue()))
 			border := min(mapData.Height, mapData.Width) / 8
 			n := int(numberOfIslandsBar.GetValue())
@@ -96,6 +105,8 @@ func (g *Game) Update() error {
 			}
 		} else if common.Collide(x, y, &terraformLakesButton) {
 			mapData.TerraformLakes(int(fillinBar.GetValue()))
+		} else if common.Collide(x, y, &savePNG) {
+			mapData.OutputPNG("image.png")
 		} else if common.Collide(x, y, &exitButton) {
 			os.Exit(0)
 		}
@@ -110,6 +121,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// Draw buttons
 	exitButton.Draw(screen)
 	generateButton.Draw(screen)
+	savePNG.Draw(screen)
 	terraformLakesButton.Draw(screen)
 	// Draw the control bars
 	falloffProbBar.Draw(screen)
