@@ -1,7 +1,10 @@
 package common
 
+import "github.com/hajimehoshi/ebiten/v2"
+
 type Interactable interface {
 	GetBounds() (float32, float32, float32, float32)
+	Draw(*ebiten.Image)
 }
 
 func Collide(x, y int, button Interactable) bool {

@@ -9,9 +9,8 @@ import (
 )
 
 type Game struct{}
-
-var prevMousePressed bool = false
 var mapData *mapdata.MapArray = mapdata.NewMapArray(int(resolutionBarX.GetValue()), int(resolutionBarY.GetValue()))
+var State int = common.StateMain
 
 func (g *Game) Update() error {
 	// Update game logic here
@@ -21,6 +20,9 @@ func (g *Game) Update() error {
 	resolutionBarY.Update()
 	fillinBar.Update()
 	mouseUpdate()
+	if State == common.StateSaveDialog {
+		saveDialog.Update()
+	}
 	return nil
 }
 
@@ -28,6 +30,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black)
 	mapData.RenderMap(screen)
 	drawHUD(screen)
+	saveMenu(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -46,4 +49,13 @@ func drawHUD(screen *ebiten.Image) {
 	resolutionBarX.Draw(screen)
 	resolutionBarY.Draw(screen)
 	fillinBar.Draw(screen)
+}
+
+func saveMenu(screen *ebiten.Image) {
+	if State == common.StateSaveDialog {
+		screen.Fill(common.DisabledOverlay)
+		saveDialog.Draw(screen)
+		saveButton.Draw(screen)
+		cancelButton.Draw(screen)
+	}
 }

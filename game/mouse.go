@@ -9,6 +9,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+var prevMousePressed bool = false
+
 func mouseUpdate() {
 	mouseButtonPressed := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
 	if !mouseButtonPressed && prevMousePressed {
@@ -26,6 +28,16 @@ func mouseUpdate() {
 			}
 		} else if common.Collide(x, y, &terraformLakesButton) {
 			mapData.TerraformLakes(int(fillinBar.GetValue()))
+		} else if common.Collide(x, y, &savePNG) {
+			State = common.StateSaveDialog
+			saveDialog.SetActive(true)
+			saveDialog.SetText("map")
+		} else if common.Collide(x, y, &saveButton) && State == common.StateSaveDialog {
+			mapData.OutputPNG(saveDialog.GetText() + ".png")
+			State = common.StateMain
+		} else if common.Collide(x, y, &cancelButton) && State == common.StateSaveDialog {
+			State = common.StateMain
+			saveDialog.SetActive(false)
 		} else if common.Collide(x, y, &exitButton) {
 			os.Exit(0)
 		}
