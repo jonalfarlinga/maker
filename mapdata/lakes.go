@@ -1,17 +1,16 @@
 package mapdata
 
-import "log"
-
 func (m *MapArray) TerraformLakes(fillin int) {
-	scope := max(min(m.Width, m.Height)/25, 5)
+	scope := max(min(m.Width, m.Height)/25, 5) // 5 or 1/25 of the map size
 	x1, y1 := 0, 0
 	x2, y2 := scope, scope
-	log.Printf("Terraforming lakes with scope %d\n", scope)
+	// log.Printf("Terraforming lakes with scope %d\n", scope)
 	perimeterSize := 2*(scope-1) + 2*(scope-1)
 	lakelets := 0
 	expandedLakes := 0
 	// Scanning function with a sliding window
 	scanRow := func(x1, y1, x2, y2 int) {
+		// log.Printf("Scanning row %d %d %d %d\n", x1, y1, x2, y2)
 		// Calculate the number of perimeter land cells in the first window
 		perimeterLand := 0
 		for i := x1; i < x2; i++ {
@@ -48,12 +47,12 @@ func (m *MapArray) TerraformLakes(fillin int) {
 				lakelets++
 				disc := r.Intn(scope*scope) * fillin
 				if disc > containedWater*containedWater {
-				// Fill the lake with land
-				for i := x1; i < x2; i++ {
-					for j := y1; j < y2; j++ {
-						m.mapArray[i][j] = 1
+					// Fill the lake with land
+					for i := x1; i < x2; i++ {
+						for j := y1; j < y2; j++ {
+							m.mapArray[i][j] = 1
+						}
 					}
-				}
 				} else {
 					expandedLakes++
 					// make a lake
@@ -173,11 +172,11 @@ func (m *MapArray) TerraformLakes(fillin int) {
 	}
 
 	// Perform the Terraform
-	for y2 < m.Width {
+	for y2 < m.Height {
 		scanRow(x1, y1, x2, y2)
 		x1, x2 = 0, scope
 		y1++
 		y2++
 	}
-	log.Printf("Lakelets: %d, Expanded Lakes: %d\n", lakelets, expandedLakes)
+	// log.Printf("Lakelets: %d, Expanded Lakes: %d\n", lakelets, expandedLakes)
 }

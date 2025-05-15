@@ -13,7 +13,7 @@ func (m *MapArray) OutputPNG(filename string) {
 
 	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
 
-	// Set color for each pixel.
+	// Set color for each pixel
 	for x := 0; x < m.Width; x++ {
 		for y := 0; y < m.Height; y++ {
 			switch {
@@ -30,6 +30,6 @@ func (m *MapArray) OutputPNG(filename string) {
 	}
 
 	// Encode as PNG.
-	f, _ := os.Create("image.png")
+	f, _ := os.Create(filename)
 	png.Encode(f, img)
 }
