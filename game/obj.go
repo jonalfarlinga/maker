@@ -32,32 +32,6 @@ var terraformLakesButton common.Button = common.Button{
 	Active: true,
 }
 
-var savePNG common.Button = common.Button{
-	Width:  150,
-	Height: 50,
-	X:      50,
-	Y:      float32(common.ScreenHeight - 100),
-	Text:   "Save PNG",
-	Active: true,
-}
-
-var saveButton common.Button = common.Button{
-	Width:  150,
-	Height: 50,
-	X:      float32(common.ScreenWidth/2 - 75),
-	Y:      float32(common.ScreenHeight - 200),
-	Text:   "Save",
-	Active: true,
-}
-var cancelButton common.Button = common.Button{
-	Width:  150,
-	Height: 50,
-	X:      float32(common.ScreenWidth/2 - 75),
-	Y:      float32(common.ScreenHeight - 100),
-	Text:   "Cancel",
-	Active: true,
-}
-
 var falloffProbBar *mapdata.MapControl = mapdata.NewMapControl(
 	50, 150, 200,
 	1.0, 100.0,
@@ -86,10 +60,4 @@ var fillinBar *mapdata.MapControl = mapdata.NewMapControl(
 	common.ScreenWidth-250, 150, 200,
 	0.0, 15.0,
 	"Lake Suppresion",
-)
-
-var saveDialog *common.TextBox = common.NewTextBox(
-	int(common.ScreenWidth/2) - 200, int(common.ScreenHeight/2) - 100,
-	200, 400,
-	"Save",
 )

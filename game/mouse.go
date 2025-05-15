@@ -15,7 +15,8 @@ func mouseUpdate() {
 	mouseButtonPressed := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
 	if !mouseButtonPressed && prevMousePressed {
 		x, y := ebiten.CursorPosition()
-		if common.Collide(x, y, &generateButton) {
+		switch {
+		case common.Collide(x, y, &generateButton):
 			falloffProb := falloffProbBar.GetValue() * float32(max(mapData.Width, mapData.Height)) / 2
 			mapData = mapdata.NewMapArray(int(resolutionBarX.GetValue()), int(resolutionBarY.GetValue()))
 			border := min(mapData.Height, mapData.Width) / 8
@@ -26,19 +27,22 @@ func mouseUpdate() {
 				y := border + rand.Intn(border*6)
 				mapData.GenerateIsland(x, y, int(falloffProb))
 			}
-		} else if common.Collide(x, y, &terraformLakesButton) {
+		case common.Collide(x, y, &terraformLakesButton):
 			mapData.TerraformLakes(int(fillinBar.GetValue()))
-		} else if common.Collide(x, y, &savePNG) {
+		case common.Collide(x, y, &savePNG):
 			State = common.StateSaveDialog
 			saveDialog.SetActive(true)
 			saveDialog.SetText("map")
-		} else if common.Collide(x, y, &saveButton) && State == common.StateSaveDialog {
+		case common.Collide(x, y, &saveButton) && State == common.StateSaveDialog:
 			mapData.OutputPNG(saveDialog.GetText() + ".png")
 			State = common.StateMain
-		} else if common.Collide(x, y, &cancelButton) && State == common.StateSaveDialog {
+		case common.Collide(x, y, &cancelButton) && State == common.StateSaveDialog:
 			State = common.StateMain
 			saveDialog.SetActive(false)
-		} else if common.Collide(x, y, &exitButton) {
+		case common.Collide(x, y, &cancelButton) && State == common.StateSaveDialog:
+			State = common.StateMain
+			saveDialog.SetActive(false)
+		case common.Collide(x, y, &exitButton):
 			os.Exit(0)
 		}
 	}

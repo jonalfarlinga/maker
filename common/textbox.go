@@ -33,9 +33,6 @@ func NewTextBox(x, y, height, width int, name string) *TextBox {
 }
 
 func (tb *TextBox) Update() {
-	if !tb.active {
-		return
-	}
 	if !prevBackPressed && ebiten.IsKeyPressed(ebiten.KeyBackspace) && len(tb.text) > 0 {
 		tb.text = tb.text[:len(tb.text)-1]
 	}

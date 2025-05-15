@@ -12,7 +12,7 @@ func main() {
 
 	// Set window size and run in fullscreen
 	ebiten.SetWindowSize(int(common.ScreenWidth), int(common.ScreenHeight))
-	ebiten.SetFullscreen(true)
+	ebiten.SetFullscreen(false)
 
 	err := ebiten.RunGame(g)
 	if err != nil {

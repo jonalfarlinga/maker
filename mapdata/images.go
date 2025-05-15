@@ -30,6 +30,6 @@ func (m *MapArray) OutputPNG(filename string) {
 	}
 
 	// Encode as PNG.
-	f, _ := os.Create(filename)
+	f, _ := os.Create("saved_maps/" + filename)
 	png.Encode(f, img)
 }
