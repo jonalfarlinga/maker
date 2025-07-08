@@ -17,7 +17,8 @@ func mouseUpdate() {
 		x, y := ebiten.CursorPosition()
 		switch {
 		case common.Collide(x, y, &generateButton):
-			falloffProb := falloffProbBar.GetValue() * float32(max(mapData.Width, mapData.Height)) / 2
+			falloffProb := (falloffProbBar.GetValue() *
+				float32(max(mapData.Width, mapData.Height)) / 30)
 			mapData = mapdata.NewMapArray(int(resolutionBarX.GetValue()), int(resolutionBarY.GetValue()))
 			border := min(mapData.Height, mapData.Width) / 8
 			n := int(numberOfIslandsBar.GetValue())
@@ -28,7 +29,7 @@ func mouseUpdate() {
 				mapData.GenerateIsland(x, y, int(falloffProb))
 			}
 		case common.Collide(x, y, &terraformLakesButton):
-			mapData.TerraformLakes(int(fillinBar.GetValue()))
+			mapData.TerraformLakes(int(fillinBar.GetValue()/3))
 		case common.Collide(x, y, &savePNG):
 			State = common.StateSaveDialog
 			saveDialog.SetActive(true)

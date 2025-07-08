@@ -69,7 +69,7 @@ func (mc *MapControl) GetValue() float32 {
 
 func (mc *MapControl) Draw(screen *ebiten.Image) {
 	// Draw the control bar
-	vector.DrawFilledRect(screen, float32(mc.originX), float32(mc.originY), float32(mc.length), 15, color.RGBA{0xFF, 0x00, 0x00, 0xFF}, false)
+	vector.DrawFilledRect(screen, float32(mc.originX), float32(mc.originY), float32(mc.length+15), 15, color.RGBA{0xFF, 0x00, 0x00, 0xFF}, false)
 	// Draw the control knob
 	vector.DrawFilledRect(screen, float32(mc.originX+mc.pos), float32(mc.originY), 15, 15, color.RGBA{0x99, 0x99, 0x99, 0xFF}, false)
 	// Draw the Name

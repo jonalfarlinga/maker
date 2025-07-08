@@ -85,7 +85,7 @@ func (m *MapArray) GenerateIsland(x, y, prob int) {
 			continue
 		}
 		if r.Intn(100) < prob {
-			m.GenerateIsland(dx, dy, prob-5)
+			m.GenerateIsland(dx, dy, prob-1)
 		}
 	}
 }
