@@ -21,12 +21,12 @@ type MapControl struct {
 	floating bool
 }
 
-func NewMapControl(originX, originY, length int, minValue, maxValue float32, name string) *MapControl {
+func NewMapControl(originX, originY, length, minValue, maxValue float32, name string) *MapControl {
 	return &MapControl{
 		name:	 name,
-		originX:  originX,
-		originY:  originY,
-		length:   length,
+		originX:  int(originX),
+		originY:  int(originY),
+		length:   int(length),
 		pos:      0,
 		minValue: minValue,
 		maxValue: maxValue,
@@ -73,10 +73,10 @@ func (mc *MapControl) Draw(screen *ebiten.Image) {
 	// Draw the control knob
 	vector.DrawFilledRect(screen, float32(mc.originX+mc.pos), float32(mc.originY), 15, 15, color.RGBA{0x99, 0x99, 0x99, 0xFF}, false)
 	// Draw the Name
-	text.Draw(screen, mc.name, common.MenuFont, int(mc.originX+5), int(mc.originY-3), color.White)
+	text.Draw(screen, mc.name, common.MenuFont, mc.originX+5, mc.originY-3, color.White)
 	// Draw the value
 	value := strconv.Itoa(int(mc.GetValue()))
-	text.Draw(screen, value, common.MenuFont, int(mc.originX+mc.length/2), int(mc.originY+12), color.White)
+	text.Draw(screen, value, common.MenuFont, mc.originX+mc.length/2, mc.originY+12, color.White)
 }
 
 func (mc *MapControl) GetBounds() (float32, float32, float32, float32) {

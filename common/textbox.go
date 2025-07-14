@@ -37,7 +37,7 @@ func (tb *TextBox) Update() {
 		tb.text = tb.text[:len(tb.text)-1]
 	}
 	for _, r := range ebiten.AppendInputChars(nil) {
-		if r > 32 && r < 127 {
+		if r > 32 && r < 127 { // all ASCII characters
 			tb.text += string(r)
 		} else {
 			// log.Println("Invalid character:", r)

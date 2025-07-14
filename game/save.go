@@ -1,46 +1,46 @@
 package game
 
 import (
-	"maker/common"
+	c "maker/common"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-var savePNG common.Button = common.Button{
-	Width:  150,
-	Height: 50,
-	X:      50,
-	Y:      float32(common.ScreenHeight - 100),
+var savePNG c.Button = c.Button{
+	Width:  3*c.UITileUnit,
+	Height: c.UITileUnit,
+	X:      c.UITileUnit,
+	Y:      float32(c.ScreenHeight) - 2*c.UITileUnit,
 	Text:   "Save PNG",
 	Active: true,
 }
 
-var saveButton common.Button = common.Button{
-	Width:  150,
-	Height: 50,
-	X:      float32(common.ScreenWidth/2 - 75),
-	Y:      float32(common.ScreenHeight - 200),
+var saveButton c.Button = c.Button{
+	Width:  3*c.UITileUnit,
+	Height: c.UITileUnit,
+	X:      float32(c.ScreenWidth/2) - 1.5*c.UITileUnit,
+	Y:      float32(c.ScreenHeight) - 4*c.UITileUnit,
 	Text:   "Save",
 	Active: true,
 }
-var cancelButton common.Button = common.Button{
-	Width:  150,
-	Height: 50,
-	X:      float32(common.ScreenWidth/2 - 75),
-	Y:      float32(common.ScreenHeight - 100),
+var cancelButton c.Button = c.Button{
+	Width:  3*c.UITileUnit,
+	Height: c.UITileUnit,
+	X:      float32(c.ScreenWidth/2) - 1.5*c.UITileUnit,
+	Y:      float32(c.ScreenHeight - 100),
 	Text:   "Cancel",
 	Active: true,
 }
 
-var saveDialog *common.TextBox = common.NewTextBox(
-	int(common.ScreenWidth/2)-200, int(common.ScreenHeight/2)-100,
-	200, 400,
+var saveDialog *c.TextBox = c.NewTextBox(
+	c.ScreenWidth/2-4*int(c.UITileUnit), c.ScreenHeight/2-2*int(c.UITileUnit),
+	int(4*c.UITileUnit), int(8*c.UITileUnit),
 	"Save",
 )
 
 func drawSaveMenu(screen *ebiten.Image) {
-	if State == common.StateSaveDialog {
-		screen.Fill(common.DisabledOverlay)
+	if State == c.StateSaveDialog {
+		screen.Fill(c.DisabledOverlay)
 		saveDialog.Draw(screen)
 		saveButton.Draw(screen)
 		cancelButton.Draw(screen)
@@ -48,7 +48,7 @@ func drawSaveMenu(screen *ebiten.Image) {
 }
 
 func saveUpdate() {
-	if State == common.StateSaveDialog {
+	if State == c.StateSaveDialog {
 		saveDialog.Update()
 	}
 }

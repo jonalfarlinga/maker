@@ -1,63 +1,63 @@
 package game
 
 import (
-	"maker/common"
+	c "maker/common"
 	"maker/mapdata"
 )
 
-var exitButton common.Button = common.Button{
-	Width:  150,
-	Height: 50,
-	X:      float32(common.ScreenWidth - 200),
-	Y:      float32(common.ScreenHeight - 100),
+var exitButton c.Button = c.Button{
+	Width:  3*c.UITileUnit,
+	Height: c.UITileUnit,
+	X:      float32(c.ScreenWidth - int(c.UITileUnit)),
+	Y:      float32(c.ScreenHeight - int(c.UITileUnit)),
 	Text:   "Exit",
 	Active: true,
 }
 
-var generateButton common.Button = common.Button{
-	Width:  150,
-	Height: 50,
-	X:      50,
-	Y:      50,
+var generateButton c.Button = c.Button{
+	Width:  3*c.UITileUnit,
+	Height: c.UITileUnit,
+	X:      c.UITileUnit,
+	Y:      c.UITileUnit,
 	Text:   "Generate",
 	Active: true,
 }
 
-var terraformLakesButton common.Button = common.Button{
-	Width:  150,
-	Height: 50,
-	X:      float32(common.ScreenWidth - 200),
-	Y:      50,
+var terraformLakesButton c.Button = c.Button{
+	Width:  3*c.UITileUnit,
+	Height: c.UITileUnit,
+	X:      float32(c.ScreenWidth) - 4*c.UITileUnit,
+	Y:      c.UITileUnit,
 	Text:   "Terraform Lakes",
 	Active: true,
 }
 
 var falloffProbBar *mapdata.MapControl = mapdata.NewMapControl(
-	50, 150, 200,
-	1.0, 100.0,
+	c.UITileUnit, 3*c.UITileUnit, 4*c.UITileUnit,
+	c.LandmassExpansionMinValue, c.LandmassExpansionMaxValue,
 	"Landmass Expansion",
 )
 
 var numberOfIslandsBar *mapdata.MapControl = mapdata.NewMapControl(
-	50, 200, 200,
-	1.0, 10.0,
+	c.UITileUnit, 4*c.UITileUnit, 4*c.UITileUnit,
+	c.NumberOfIslandsMinValue, c.NumberOfIslandsMaxValue,
 	"Number of Islands",
 )
 
 var resolutionBarX *mapdata.MapControl = mapdata.NewMapControl(
-	50, 250, 200,
-	25.0, 720.0,
+	c.UITileUnit, 5*c.UITileUnit, 4*c.UITileUnit,
+	c.ResolutionMinValue, c.ResolutionMaxValue,
 	"Resolution X",
 )
 
 var resolutionBarY *mapdata.MapControl = mapdata.NewMapControl(
-	50, 300, 200,
-	25.0, 720.0,
+	c.UITileUnit, 6*c.UITileUnit, 4*c.UITileUnit,
+	c.ResolutionMinValue, c.ResolutionMaxValue,
 	"Resolution Y",
 )
 
 var fillinBar *mapdata.MapControl = mapdata.NewMapControl(
-	common.ScreenWidth-250, 150, 200,
-	0.0, 15.0,
+	float32(c.ScreenWidth)-5*c.UITileUnit, 3*c.UITileUnit, 4*c.UITileUnit,
+	c.LakeSuppressionMinValue, c.LakeSuppressionMaxValue,
 	"Lake Suppresion",
 )
