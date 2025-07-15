@@ -8,8 +8,8 @@ import (
 var exitButton c.Button = c.Button{
 	Width:  3*c.UITileUnit,
 	Height: c.UITileUnit,
-	X:      float32(c.ScreenWidth - int(c.UITileUnit)),
-	Y:      float32(c.ScreenHeight - int(c.UITileUnit)),
+	X:      float32(c.ScreenWidth - 4*int(c.UITileUnit)),
+	Y:      float32(c.ScreenHeight - 2*int(c.UITileUnit)),
 	Text:   "Exit",
 	Active: true,
 }

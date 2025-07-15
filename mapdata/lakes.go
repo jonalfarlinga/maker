@@ -1,6 +1,8 @@
 package mapdata
 
-func (m *MapArray) TerraformLakes(fillin int) {
+import "math"
+
+func (m *MapArray) TerraformLakes(fillin float32) {
 	scope := max(min(m.Width, m.Height)/25, 5) // 5 or 1/25 of the map size
 	x1, y1 := 0, 0
 	x2, y2 := scope, scope
@@ -32,8 +34,8 @@ func (m *MapArray) TerraformLakes(fillin int) {
 
 		// Calculate the number of contained water cells in first window
 		containedWater := 0
-		for i := 1; i < scope; i++ {
-			for j := 1; j < scope; j++ {
+		for i := x1 + 1; i < x2-1; i++ {
+			for j := y1 + 1; j < y2-1; j++ {
 				if m.mapArray[i][j] == 0 {
 					containedWater++
 				}
@@ -45,8 +47,14 @@ func (m *MapArray) TerraformLakes(fillin int) {
 			if perimeterLand == perimeterSize && containedWater > 0 {
 				// It's a lake
 				lakelets++
-				disc := r.Intn(scope*scope) * fillin
-				if disc > containedWater*containedWater {
+				fillFactor := float32(fillin) / 100.0
+				maxWater := float32((scope-2)*(scope-2))
+				waterRatio := float32(containedWater) / maxWater
+				steepness := 10.0
+				bias := 0.5 - fillFactor  // flip curve as fillin increases
+				centered := float64(waterRatio - bias)
+				fillProb := 1.0 / (1.0 + math.Exp(-steepness*centered))
+				if r.Float32() < float32(fillProb) {
 					// Fill the lake with land
 					for i := x1; i < x2; i++ {
 						for j := y1; j < y2; j++ {
@@ -83,6 +91,9 @@ func (m *MapArray) TerraformLakes(fillin int) {
 						// flood fill the lake
 						queue := make([][2]int, 0)
 						queue = append(queue, [2]int{x, y})
+
+						centerX, centerY := float32(x), float32(y) // seed point
+
 						floodFill := func(x, y int) {
 							if x < 0 || x >= m.Width || y < 0 || y >= m.Height {
 								return
@@ -95,23 +106,15 @@ func (m *MapArray) TerraformLakes(fillin int) {
 							if x > x1 && x < x2-1 && y > y1 && y < y2-1 {
 								containedWater--
 							}
-							if x < x1 || x >= x2 || y < y1 || y >= y2 {
-								if r.Intn(10) > 0 {
-									return
-								}
-							} else {
-								if r.Intn(6) > 0 {
-									return
-								}
+							if r.Float32() > m.growthChance(
+								float32(x), float32(y), centerX, centerY,
+							) {
+								return
 							}
-							queue = append(queue, [2]int{x, y})
-							queue = append(queue, [2]int{x - 1, y})
-							queue = append(queue, [2]int{x + 1, y})
-							queue = append(queue, [2]int{x, y - 1})
-							queue = append(queue, [2]int{x, y + 1})
-							queue = append(queue, [2]int{x - 1, y - 1})
-							queue = append(queue, [2]int{x + 1, y - 1})
-							queue = append(queue, [2]int{x - 1, y + 1})
+							for _, d := range cardinal {
+								nx, ny := x+d[0], y+d[1]
+								queue = append(queue, [2]int{nx, ny})
+							}
 						}
 						for len(queue) > 0 {
 							floodFill(queue[0][0], queue[0][1])
@@ -125,47 +128,9 @@ func (m *MapArray) TerraformLakes(fillin int) {
 				break
 			}
 			// Move the window
-			// Handle corners
-			if m.mapArray[x1][y1] == 1 {
-				perimeterLand--
-			}
-			if m.mapArray[x1][y2] == 1 {
-				perimeterLand--
-			}
-			if m.mapArray[x2][y1] == 1 {
-				perimeterLand++
-			}
-			if m.mapArray[x2][y2] == 1 {
-				perimeterLand++
-			}
-			// Remove left column
-			for j := y1 + 1; j < y2-1; j++ {
-				if m.mapArray[x1][j] == 1 {
-					perimeterLand--
-				}
-			}
-			// Move the left interior to left column
-			for j := y1 + 1; j < y2-1; j++ {
-				if m.mapArray[x1+1][j] == 0 {
-					containedWater--
-				} else {
-					perimeterLand++
-				}
-			}
-			// Move right column to right interior
-			for j := y1 + 1; j < y2-1; j++ {
-				if m.mapArray[x2][j] == 0 {
-					containedWater++
-				} else {
-					perimeterLand--
-				}
-			}
-			// Add right column
-			for j := y1 + 1; j < y2-1; j++ {
-				if m.mapArray[x2+1][j] == 1 {
-					perimeterLand++
-				}
-			}
+			perimeterLand, containedWater = m.moveScanningWindow(
+				x1, y1, x2, y2, perimeterLand, containedWater,
+			)
 			x1++
 			x2++
 		}
@@ -179,4 +144,62 @@ func (m *MapArray) TerraformLakes(fillin int) {
 		y2++
 	}
 	// log.Printf("Lakelets: %d, Expanded Lakes: %d\n", lakelets, expandedLakes)
+}
+
+
+func (m *MapArray) moveScanningWindow(x1, y1, x2, y2, perimeterLand, containedWater int) (int, int) {
+	// Handle corners
+	if m.mapArray[x1][y1] == 1 {
+		perimeterLand--
+	}
+	if m.mapArray[x1][y2] == 1 {
+		perimeterLand--
+	}
+	if m.mapArray[x2][y1] == 1 {
+		perimeterLand++
+	}
+	if m.mapArray[x2][y2] == 1 {
+		perimeterLand++
+	}
+	// Remove left column
+	for j := y1 + 1; j < y2-1; j++ {
+		if m.mapArray[x1][j] == 1 {
+			perimeterLand--
+		}
+	}
+	// Move the left interior to left column
+	for j := y1 + 1; j < y2-1; j++ {
+		if m.mapArray[x1+1][j] == 0 {
+			containedWater--
+		} else {
+			perimeterLand++
+		}
+	}
+	// Move right column to right interior
+	for j := y1 + 1; j < y2-1; j++ {
+		if m.mapArray[x2][j] == 0 {
+			containedWater++
+		} else {
+			perimeterLand--
+		}
+	}
+	// Add right column
+	for j := y1 + 1; j < y2-1; j++ {
+		if m.mapArray[x2+1][j] == 1 {
+			perimeterLand++
+		}
+	}
+	return perimeterLand, containedWater
+}
+
+func (m *MapArray) growthChance(x, y, centerX, centerY float32) float32 {
+	dist := math.Sqrt(float64((x-centerX)*(x-centerX) + (y-centerY)*(y-centerY)))
+	base := 2.5
+	chance := base / (dist + 1.0)
+	if chance < 0.0 {
+		chance = 0.0
+	} else if chance > 1.0 {
+		chance = 1.0
+	}
+	return float32(chance)
 }

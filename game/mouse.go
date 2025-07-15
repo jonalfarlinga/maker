@@ -33,8 +33,7 @@ func mouseUpdate() {
 			}
 
 		case common.Collide(x, y, &terraformLakesButton):
-			mapData.TerraformLakes(
-				int(fillinBar.GetValue()))
+			mapData.TerraformLakes(fillinBar.GetValue())
 
 		case common.Collide(x, y, &savePNG):
 			State = common.StateSaveDialog
