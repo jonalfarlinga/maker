@@ -42,6 +42,7 @@ func drawHUD(screen *ebiten.Image) {
 	generateButton.Draw(screen)
 	savePNG.Draw(screen)
 	terraformLakesButton.Draw(screen)
+	smoothLandformsButton.Draw(screen)
 	// Draw the control bars
 	falloffProbBar.Draw(screen)
 	numberOfIslandsBar.Draw(screen)

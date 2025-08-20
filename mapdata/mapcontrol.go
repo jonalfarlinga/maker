@@ -23,7 +23,7 @@ type MapControl struct {
 
 func NewMapControl(originX, originY, length, minValue, maxValue float32, name string) *MapControl {
 	return &MapControl{
-		name:	 name,
+		name:     name,
 		originX:  int(originX),
 		originY:  int(originY),
 		length:   int(length),
@@ -37,7 +37,10 @@ func (mc *MapControl) Update() {
 	// Update the position of the map control
 	mouseButtonPressed := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
 	if !mouseButtonPressed {
-		mc.floating = false
+		if mc.floating {
+			mc.floating = false
+			common.DebugPrintln("mapcontrol", "MapControl", mc.name, "released at position:", mc.pos)
+		}
 		return
 	}
 	x, y := ebiten.CursorPosition()
@@ -71,7 +74,7 @@ func (mc *MapControl) Draw(screen *ebiten.Image) {
 	// Draw the control bar
 	vector.DrawFilledRect(screen, float32(mc.originX), float32(mc.originY), float32(mc.length+15), 15, color.RGBA{0xFF, 0x00, 0x00, 0xFF}, false)
 	// Draw the control knob
-	vector.DrawFilledRect(screen, float32(mc.originX+mc.pos), float32(mc.originY), 15, 15, color.RGBA{0x99, 0x99, 0x99, 0xFF}, false)
+	vector.DrawFilledRect(screen, float32(mc.originX+mc.pos)+1, float32(mc.originY)+1, 13, 13, color.RGBA{0x99, 0x99, 0x99, 0xFF}, false)
 	// Draw the Name
 	text.Draw(screen, mc.name, common.MenuFont, mc.originX+5, mc.originY-3, color.White)
 	// Draw the value

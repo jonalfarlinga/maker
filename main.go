@@ -1,15 +1,27 @@
 package main
 
 import (
+	"flag"
 	"image"
 	"maker/assets"
 	"maker/common"
 	"maker/game"
+	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 func main() {
+	var debugFiles string
+	flag.StringVar(&debugFiles, "debug", "", "comma-separated list of files to activate debug logging for (or 'all')")
+	flag.Parse()
+
+	for _, f := range strings.Split(debugFiles, ",") {
+		f = strings.TrimSpace(f)
+		if f != "" {
+			common.DebugFiles[f] = true
+		}
+	}
 	g := &game.Game{}
 
 	// Set window size and run in fullscreen

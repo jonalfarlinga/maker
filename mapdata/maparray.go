@@ -2,8 +2,7 @@ package mapdata
 
 import (
 	c "maker/common"
-	"math/rand"
-	"time"
+	r "math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
@@ -15,8 +14,6 @@ type MapArray struct {
 	mapArray [][]int
 	visited  [][]bool
 }
-
-var r *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 var cardinal [8][2]int = [8][2]int{
 	{0, -1},  // North
@@ -65,6 +62,47 @@ func (m *MapArray) RenderMap(screen *ebiten.Image) {
 		}
 	}
 }
+
+func (m *MapArray) SmoothLandforms() {
+	window := make([][]int, 3)
+	for i := range window {
+		window[i] = make([]int, 3)
+		for j := range window[i] {
+			window[i][j] = m.mapArray[i][j]
+		}
+	}
+	for x := 0; x < m.Width; x++ {
+		for y := 0; y < m.Height; y++ {
+			// Populate the 3x3 window with the current cell and its neighbors
+			for dx := -1; dx <= 1; dx++ {
+				for dy := -1; dy <= 1; dy++ {
+					nx, ny := x+dx, y+dy
+					if nx >= 0 && ny >= 0 && nx < m.Width && ny < m.Height {
+						window[dx+1][dy+1] = m.mapArray[nx][ny]
+					} else {
+						window[dx+1][dy+1] = 0 // Treat out-of-bounds as water
+					}
+				}
+			}
+			// Count the number of land cells in the window
+			landCount := 0
+			for i := 0; i < 3; i++ {
+				for j := 0; j < 3; j++ {
+					if window[i][j] == 1 {
+						landCount++
+					}
+				}
+			}
+			// Apply smoothing rules
+			if landCount >= 5 {
+				m.mapArray[x][y] = 1
+			} else {
+				m.mapArray[x][y] = 0
+			}
+		}
+	}
+}
+
 
 func (m *MapArray) GenerateIsland(x, y, prob int) {
 	m.mapArray[x][y] = 1

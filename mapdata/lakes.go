@@ -1,18 +1,22 @@
 package mapdata
 
-import "math"
+import (
+	"maker/common"
+	"math"
+	r "math/rand"
+)
 
 func (m *MapArray) TerraformLakes(fillin float32) {
 	scope := max(min(m.Width, m.Height)/25, 5) // 5 or 1/25 of the map size
 	x1, y1 := 0, 0
 	x2, y2 := scope, scope
-	// log.Printf("Terraforming lakes with scope %d\n", scope)
+	common.DebugPrintln("lakes", "Terraforming lakes with scope", scope)
 	perimeterSize := 2*(scope-1) + 2*(scope-1)
 	lakelets := 0
 	expandedLakes := 0
 	// Scanning function with a sliding window
 	scanRow := func(x1, y1, x2, y2 int) {
-		// log.Printf("Scanning row %d %d %d %d\n", x1, y1, x2, y2)
+		common.DebugPrintln("lakes", "Scanning row:", x1, y1, x2, y2)
 		// Calculate the number of perimeter land cells in the first window
 		perimeterLand := 0
 		for i := x1; i < x2; i++ {
@@ -48,13 +52,14 @@ func (m *MapArray) TerraformLakes(fillin float32) {
 				// It's a lake
 				lakelets++
 				fillFactor := float32(fillin) / 100.0
-				maxWater := float32((scope-2)*(scope-2))
+				maxWater := float32((scope - 2) * (scope - 2))
 				waterRatio := float32(containedWater) / maxWater
 				steepness := 10.0
-				bias := 0.5 - fillFactor  // flip curve as fillin increases
+				bias := 0.5 - fillFactor // flip curve as fillin increases
 				centered := float64(waterRatio - bias)
 				fillProb := 1.0 / (1.0 + math.Exp(-steepness*centered))
 				if r.Float32() < float32(fillProb) {
+					common.DebugPrintln("lakes", "Filling lake at", x1, y1, x2, y2, "with land")
 					// Fill the lake with land
 					for i := x1; i < x2; i++ {
 						for j := y1; j < y2; j++ {
@@ -145,7 +150,6 @@ func (m *MapArray) TerraformLakes(fillin float32) {
 	}
 	// log.Printf("Lakelets: %d, Expanded Lakes: %d\n", lakelets, expandedLakes)
 }
-
 
 func (m *MapArray) moveScanningWindow(x1, y1, x2, y2, perimeterLand, containedWater int) (int, int) {
 	// Handle corners

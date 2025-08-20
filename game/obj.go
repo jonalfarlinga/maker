@@ -32,6 +32,15 @@ var terraformLakesButton c.Button = c.Button{
 	Active: true,
 }
 
+var smoothLandformsButton c.Button = c.Button{
+	Width:  3*c.UITileUnit,
+	Height: c.UITileUnit,
+	X:      float32(c.ScreenWidth) - 4*c.UITileUnit,
+	Y:      4*c.UITileUnit,
+	Text:   "Smooth Landforms",
+	Active: true,
+}
+
 var falloffProbBar *mapdata.MapControl = mapdata.NewMapControl(
 	c.UITileUnit, 3*c.UITileUnit, 4*c.UITileUnit,
 	c.LandmassExpansionMinValue, c.LandmassExpansionMaxValue,
