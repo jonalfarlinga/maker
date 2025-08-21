@@ -1,7 +1,9 @@
-package common
+package components
 
 import (
 	"image/color"
+
+	c "maker/common"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
@@ -14,21 +16,22 @@ type Button struct {
 	X, Y          float32
 	Text          string
 	Active        bool
+	Color         color.Color
 }
 
 func (m *Button) Draw(screen *ebiten.Image) {
-	buttonColor := ButtonColor
+	buttonColor := m.Color
 	x, y := ebiten.CursorPosition()
 	if !m.Active {
-		buttonColor = ButtonOffColor
-	} else if Collide(x, y, m) {
-		buttonColor = ButtonHoverColor
+		buttonColor = c.ButtonOffColor
+	} else if c.Collide(x, y, m) {
+		buttonColor = c.RGBAEnhance(buttonColor, 60)
 	}
 	vector.DrawFilledRect(screen, float32(m.X), float32(m.Y), float32(m.Width), float32(m.Height), buttonColor, false)
 
-	bounds := font.MeasureString(MenuFont, m.Text)
+	bounds := font.MeasureString(c.MenuFont, m.Text)
 	textX := m.X + (m.Width-float32(bounds.Floor()))/2
-	text.Draw(screen, m.Text, MenuFont, int(textX), int(m.Y+m.Height/2+5), color.White)
+	text.Draw(screen, m.Text, c.MenuFont, int(textX), int(m.Y+m.Height/2+5), color.White)
 }
 
 func (m *Button) GetBounds() (float32, float32, float32, float32) {

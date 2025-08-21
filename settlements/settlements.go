@@ -17,6 +17,12 @@ type Settlement struct {
 type Settlements []*Settlement
 
 var SettlementsList Settlements
+var placingSettlements bool = false
+
+func Toggle() bool {
+	placingSettlements = !placingSettlements
+	return placingSettlements
+}
 
 func (s *Settlements) NewSettlement() *Settlement {
 	rand.Shuffle(len(SettAmeniities), func(i, j int) {

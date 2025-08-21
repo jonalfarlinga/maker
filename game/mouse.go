@@ -3,6 +3,7 @@ package game
 import (
 	"maker/common"
 	"maker/mapdata"
+	"maker/settlements"
 	"math/rand"
 	"os"
 
@@ -60,6 +61,14 @@ func mouseUpdate() {
 		case common.Collide(x, y, &exitButton):
 			common.DebugPrintln("mouse", "ExitButton clicked, exiting application")
 			os.Exit(0)
+
+		case common.Collide(x, y, &settlementsButton):
+			on := settlements.Toggle()
+			if on {
+				settlementsButton.Color = common.ButtonGlowColor
+			} else {
+				settlementsButton.Color = common.ButtonColor
+			}
 		}
 	}
 	prevMousePressed = mouseButtonPressed

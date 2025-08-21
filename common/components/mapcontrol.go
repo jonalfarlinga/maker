@@ -1,4 +1,4 @@
-package mapdata
+package components
 
 import (
 	"image/color"

@@ -1,7 +1,7 @@
-package common
-
+package components
 import (
 	"image/color"
+	c "maker/common"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
@@ -50,10 +50,10 @@ func (tb *TextBox) Draw(screen *ebiten.Image) {
 	if !tb.active {
 		return
 	}
-	vector.DrawFilledRect(screen, float32(tb.x), float32(tb.y), float32(tb.width), float32(tb.height), PanelColor, false)
+	vector.DrawFilledRect(screen, float32(tb.x), float32(tb.y), float32(tb.width), float32(tb.height), c.PanelColor, false)
 	vector.DrawFilledRect(screen, float32(tb.x+5), float32(tb.y+15), float32(tb.width-10), float32(tb.height-20), color.White, false)
-	text.Draw(screen, tb.name, MenuFont, int(tb.x+7), int(tb.y+12), color.Black)
-	text.Draw(screen, tb.text, MenuFont, int(tb.x+7), int(tb.y+30), color.Black)
+	text.Draw(screen, tb.name, c.MenuFont, int(tb.x+7), int(tb.y+12), color.Black)
+	text.Draw(screen, tb.text, c.MenuFont, int(tb.x+7), int(tb.y+30), color.Black)
 }
 
 func (tb *TextBox) GetBounds() (float32, float32, float32, float32) {
