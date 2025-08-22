@@ -14,17 +14,21 @@ type Settlement struct {
 	Geography  string
 	Character  string
 }
-type Settlements []*Settlement
+type Settlements map[[2]int]*Settlement
 
-var SettlementsList Settlements
+var SettlementsList Settlements = make(Settlements)
 var placingSettlements bool = false
 
-func Toggle() bool {
+func TogglePlacing() bool {
 	placingSettlements = !placingSettlements
 	return placingSettlements
 }
 
-func (s *Settlements) NewSettlement() *Settlement {
+func PlacingSettlements() bool {
+	return placingSettlements
+}
+
+func (s *Settlements) NewSettlement(x, y int) *Settlement {
 	rand.Shuffle(len(SettAmeniities), func(i, j int) {
 		SettAmeniities[i], SettAmeniities[j] = SettAmeniities[j], SettAmeniities[i]
 	})
@@ -66,7 +70,7 @@ func (s *Settlements) NewSettlement() *Settlement {
 		Character:  SettCharacters[rand.Intn(len(SettCharacters))],
 		Geography:  SettGeographies[rand.Intn(len(SettGeographies))],
 	}
-	*s = append(*s, &new)
+	(*s)[[2]int{x, y}] = &new
 	return &new
 }
 

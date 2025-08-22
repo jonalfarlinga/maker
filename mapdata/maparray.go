@@ -2,6 +2,7 @@ package mapdata
 
 import (
 	c "maker/common"
+	"maker/settlements"
 	r "math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -43,7 +44,7 @@ func NewMapArray(width, height int) *MapArray {
 	}
 }
 
-func (m *MapArray) RenderMap(screen *ebiten.Image) {
+func (m *MapArray) Draw(screen *ebiten.Image) {
 	rectSize := float32(c.ScreenHeight) / float32(max(m.Width, m.Height))
 	origin := (c.ScreenWidth - c.ScreenHeight) / 2
 	for i := 0; i < m.Width; i++ {
@@ -60,6 +61,15 @@ func (m *MapArray) RenderMap(screen *ebiten.Image) {
 				color, false,
 			)
 		}
+	}
+	for pos := range settlements.SettlementsList {
+		// Draw Settlement
+		settSize := max(10, int(rectSize/4))
+		vector.DrawFilledCircle(
+			screen,
+			float32(origin)+float32(pos[0])*rectSize, float32(pos[1])*rectSize,
+		float32(settSize)/2, c.SettlementColor, false,
+		)
 	}
 }
 
@@ -103,7 +113,6 @@ func (m *MapArray) SmoothLandforms() {
 	}
 }
 
-
 func (m *MapArray) GenerateIsland(x, y, prob int) {
 	m.mapArray[x][y] = 1
 	m.visited[x][y] = true
@@ -135,4 +144,25 @@ func (m *MapArray) ResetMap() {
 			m.visited[i][j] = false
 		}
 	}
+}
+
+func (m *MapArray) GetBounds() (float32, float32, float32, float32) {
+	// Calculate rectSize and origin as in Draw
+	rectSize := float32(c.ScreenHeight) / float32(max(m.Width, m.Height))
+	origin := float32(c.ScreenWidth-c.ScreenHeight) / 2
+
+	// The rendered map is always a square of size c.ScreenHeight, centered horizontally
+	x0 := origin
+	var y0 float32 = 0
+	width := rectSize * float32(m.Width)
+	height := rectSize * float32(m.Height)
+	return x0, y0, width, height
+}
+
+func (m *MapArray) PixToGrid(x, y int) (int, int) {
+	rectSize := float32(c.ScreenHeight) / float32(max(m.Width, m.Height))
+	origin := float32(c.ScreenWidth-c.ScreenHeight) / 2
+	gridX := int((float32(x)-origin)/rectSize) + 1
+	gridY := int(float32(y)/rectSize) + 1
+	return gridX, gridY
 }

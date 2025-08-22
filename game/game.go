@@ -34,7 +34,7 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black)
-	mapData.RenderMap(screen)
+	mapData.Draw(screen)
 	for _, control := range g.controls {
 		control.Draw(screen)
 	}

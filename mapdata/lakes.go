@@ -69,7 +69,7 @@ func (m *MapArray) TerraformLakes(fillin float32) {
 				} else {
 					expandedLakes++
 					// make a lake
-					// Floodfill helper function to create lakes
+					// helper function to create lakes
 					makeALake := func(x1, y1, x2, y2 int) {
 						visited := make([][]bool, m.Width)
 						for i := range visited {
